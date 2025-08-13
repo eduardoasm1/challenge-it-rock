@@ -21,9 +21,9 @@ export class AuthService {
     private readonly rtRepo: Repository<RefreshToken>,
   ) {}
 
-  private signAccessToken(userId: number, username: string) {
+  private signAccessToken(userId: string, userName: string, roles: string[]) {
     return this.jwtService.sign(
-      { sub: userId, username },
+      { id: userId, userName, roles },
       {
         secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: this.configService.get<string>('JWT_SECRET_EXPIRES_IN'),
@@ -31,9 +31,9 @@ export class AuthService {
     );
   }
 
-  private signRefreshToken(userId: number) {
+  private signRefreshToken(userId: string) {
     return this.jwtService.sign(
-      { sub: userId, tokenType: 'refresh' },
+      { id: userId, tokenType: 'refresh' },
       {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
         expiresIn: this.configService.get<string>(
@@ -100,7 +100,11 @@ export class AuthService {
 
     await this.rtRepo.delete({ user: { id: user.id }, userAgent });
 
-    const accessToken = this.signAccessToken(user.id, user.userName);
+    const accessToken = this.signAccessToken(
+      user.id,
+      user.userName,
+      user.roles,
+    );
 
     const refreshToken = this.signRefreshToken(user.id);
 
@@ -123,7 +127,7 @@ export class AuthService {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
 
-      const user = await this.userService.findOne({ id: payload.sub });
+      const user = await this.userService.findOne({ id: payload.id });
       if (!user) {
         throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
       }
@@ -150,7 +154,11 @@ export class AuthService {
 
       await this.rtRepo.delete({ user: { id: user.id }, userAgent });
 
-      const newAccessToken = this.signAccessToken(user.id, user.userName);
+      const newAccessToken = this.signAccessToken(
+        user.id,
+        user.userName,
+        user.roles,
+      );
 
       const newRefreshToken = this.signRefreshToken(user.id);
       validToken.isRevoked = true;

@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
+import { TasksModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RefreshTokenModule } from './refresh-token/refresh-token.module';
     AuthModule,
     UserModule,
     RefreshTokenModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

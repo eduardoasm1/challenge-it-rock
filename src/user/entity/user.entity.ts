@@ -1,4 +1,5 @@
 import { RefreshToken } from 'src/refresh-token/entity/refres-token.entity';
+import { Task } from 'src/task/entity/task.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,11 +8,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Role } from '../dto/user.dto';
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'varchar', length: 45 })
   userName: string;
@@ -24,6 +26,17 @@ export class User {
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshToken[];
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    array: true,
+    default: [Role.USER],
+  })
+  roles: Role[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
