@@ -1,7 +1,9 @@
+import { RefreshToken } from 'src/refresh-token/entity/refres-token.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -19,6 +21,9 @@ export class User {
 
   @Column({ type: 'boolean', default: true })
   active: boolean;
+
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshToken[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
