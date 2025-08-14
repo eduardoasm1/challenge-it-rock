@@ -5,13 +5,14 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { FilterTaskDto } from './dto/filter-task.dto';
 import { Task } from './entity/task.entity';
 import { User } from 'src/user/entity/user.entity';
 import { Role } from 'src/user/dto/user.dto';
+import { JsonPlaceholderService } from 'src/json-placeholder/json-placeholder.service';
 
 @Injectable()
 export class TasksService {
@@ -19,6 +20,7 @@ export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    private readonly jsonPlaceholderService: JsonPlaceholderService,
   ) {}
 
   async create(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
@@ -109,5 +111,36 @@ export class TasksService {
     if (result.affected === 0) {
       throw new NotFoundException(`Task with ID "${id}" not found.`);
     }
+  }
+
+  async populate(): Promise<{ count: number }> {
+    const externalTodos = await this.jsonPlaceholderService.fetchTodos();
+
+    const externalTitles = externalTodos.map((todo) => todo.title);
+
+    const existingTasks = await this.taskRepository.find({
+      where: { title: In(externalTitles) },
+    });
+    const existingTitles = new Set(existingTasks.map((task) => task.title));
+
+    const newTodos = externalTodos.filter(
+      (todo) => !existingTitles.has(todo.title),
+    );
+
+    if (newTodos.length === 0) {
+      return { count: 0 };
+    }
+
+    const tasksToSave = newTodos.map((todo) => {
+      return this.taskRepository.create({
+        title: todo.title,
+        completed: todo.completed,
+        description: 'Tarea importada desde JSONPlaceholder.',
+      });
+    });
+
+    await this.taskRepository.save(tasksToSave);
+
+    return { count: tasksToSave.length };
   }
 }

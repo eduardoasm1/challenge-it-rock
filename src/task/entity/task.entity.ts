@@ -25,7 +25,12 @@ export class Task {
   @Column({ default: false })
   completed: boolean;
 
-  @Column({ type: 'enum', enum: TaskPriority, nullable: false })
+  @Column({
+    type: 'enum',
+    enum: TaskPriority,
+    nullable: false,
+    default: TaskPriority.MEDIUM,
+  })
   priority: TaskPriority;
 
   @ManyToOne(() => User, (user) => user.tasks)

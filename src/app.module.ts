@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { TasksModule } from './task/task.module';
+import { JsonPlaceholderModule } from './json-placeholder/json-placeholder.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TasksModule } from './task/task.module';
     UserModule,
     RefreshTokenModule,
     TasksModule,
+    JsonPlaceholderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
