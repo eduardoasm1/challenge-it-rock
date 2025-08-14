@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -13,27 +12,30 @@ import { Task } from './entity/task.entity';
 import { User } from 'src/user/entity/user.entity';
 import { Role } from 'src/user/dto/user.dto';
 import { JsonPlaceholderService } from 'src/json-placeholder/json-placeholder.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TASK_EVENTS, TaskEventPayload } from './events/task.event';
 
 @Injectable()
 export class TasksService {
-  private readonly logger = new Logger(TasksService.name);
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
     private readonly jsonPlaceholderService: JsonPlaceholderService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
-    this.logger.log('Creating new task');
     const newTask = this.taskRepository.create({
       ...createTaskDto,
       user,
     });
-    return this.taskRepository.save(newTask);
+    const savedTask = await this.taskRepository.save(newTask);
+    const payload: TaskEventPayload = { task: savedTask };
+    this.eventEmitter.emit(TASK_EVENTS.CREATED, payload);
+    return savedTask;
   }
 
   async findAll(filterDto: FilterTaskDto, user: User) {
-    this.logger.log('Find tasks by user:', user.userName);
     const { priority, completed, page, limit } = filterDto;
     const query = this.taskRepository.createQueryBuilder('task');
 
@@ -63,8 +65,6 @@ export class TasksService {
   }
 
   async findOne(id: string, user: User): Promise<Task> {
-    this.logger.log('Find task by user:', user.userName);
-
     const task = await this.taskRepository.findOne({
       where: { id, user: { id: user.id } },
       relations: ['user'],
@@ -82,11 +82,19 @@ export class TasksService {
     updateTaskDto: UpdateTaskDto,
     user: User,
   ): Promise<Task> {
-    this.logger.log('Update task by user:', user.userName);
     const task = await this.findOne(id, user);
 
+    const wasCompleted = task.completed;
+
     Object.assign(task, updateTaskDto);
-    return this.taskRepository.save(task);
+
+    const updatedTask = await this.taskRepository.save(task);
+
+    if (!wasCompleted && updatedTask.completed) {
+      const payload: TaskEventPayload = { task: updatedTask };
+      this.eventEmitter.emit(TASK_EVENTS.COMPLETED, payload);
+    }
+    return updatedTask;
   }
 
   async remove(id: string, user: User): Promise<void> {

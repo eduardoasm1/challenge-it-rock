@@ -8,6 +8,9 @@ import { UserModule } from './user/user.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { TasksModule } from './task/task.module';
 import { JsonPlaceholderModule } from './json-placeholder/json-placeholder.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -32,6 +35,16 @@ import { JsonPlaceholderModule } from './json-placeholder/json-placeholder.modul
     RefreshTokenModule,
     TasksModule,
     JsonPlaceholderModule,
+    EventEmitterModule.forRoot(),
+    NotificationsModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

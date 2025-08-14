@@ -26,46 +26,79 @@ export class TasksController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto, @Req() req: FastifyRequest) {
+  async create(
+    @Body() createTaskDto: CreateTaskDto,
+    @Req() req: FastifyRequest,
+  ) {
     const user: User = req.user;
-    return this.tasksService.create(createTaskDto, user);
+    const data = await this.tasksService.create(createTaskDto, user);
+    return {
+      success: true,
+      data,
+    };
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Query() filterDto: FilterTaskDto, @Req() req: FastifyRequest) {
+  async findAll(@Query() filterDto: FilterTaskDto, @Req() req: FastifyRequest) {
     const user: User = req.user;
-    return this.tasksService.findAll(filterDto, user);
+    const data = await this.tasksService.findAll(filterDto, user);
+    return {
+      success: true,
+      data,
+    };
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string, @Req() req: FastifyRequest) {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: FastifyRequest,
+  ) {
     const user: User = req.user;
-    return this.tasksService.findOne(id, user);
+    const data = await this.tasksService.findOne(id, user);
+    return {
+      success: true,
+      data,
+    };
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTaskDto: UpdateTaskDto,
     @Req() req: FastifyRequest,
   ) {
     const user: User = req.user;
-    return this.tasksService.update(id, updateTaskDto, user);
+    const data = await this.tasksService.update(id, updateTaskDto, user);
+    return {
+      success: true,
+      data,
+    };
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string, @Req() req: FastifyRequest) {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: FastifyRequest,
+  ) {
     const user: User = req.user;
-    return this.tasksService.remove(id, user);
+    const data = await this.tasksService.remove(id, user);
+    return {
+      success: true,
+      data,
+    };
   }
 
   @Get('populate')
   @UseGuards(ApiKeyGuard)
-  populateTasks() {
-    return this.tasksService.populate();
+  async populateTasks() {
+    const data = await this.tasksService.populate();
+    return {
+      success: true,
+      data,
+    };
   }
 }

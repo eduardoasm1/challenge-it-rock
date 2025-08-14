@@ -10,7 +10,7 @@ export class CreateTaskDto {
   @IsOptional()
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsIn([TaskPriority.LOW, TaskPriority.MEDIUM, TaskPriority.HIGH])
-  priority: TaskPriority;
+  priority?: TaskPriority;
 }
