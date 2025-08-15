@@ -14,6 +14,8 @@ import { Role } from 'src/user/dto/user.dto';
 import { JsonPlaceholderService } from 'src/json-placeholder/json-placeholder.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TASK_EVENTS, TaskEventPayload } from './events/task.event';
+import Redis from 'ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class TasksService {
@@ -22,6 +24,7 @@ export class TasksService {
     private readonly taskRepository: Repository<Task>,
     private readonly jsonPlaceholderService: JsonPlaceholderService,
     private readonly eventEmitter: EventEmitter2,
+    @InjectRedis() private readonly redis: Redis,
   ) {}
 
   async create(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
@@ -35,10 +38,30 @@ export class TasksService {
     return savedTask;
   }
 
-  async findAll(filterDto: FilterTaskDto, user: User) {
+  async findAll(
+    filterDto: FilterTaskDto,
+    user: User,
+  ): Promise<{
+    data: Task[];
+    count: number;
+    page: number;
+    limit: number;
+  }> {
     const { priority, completed, page, limit } = filterDto;
     const query = this.taskRepository.createQueryBuilder('task');
 
+    const cacheKey = `tasks:${user.id}:${priority ?? 'all'}:${completed ?? 'all'}:${page ?? 1}:${limit ?? 10}`;
+
+    const cached = await this.redis.get(cacheKey);
+
+    if (cached) {
+      return JSON.parse(cached) as {
+        data: Task[];
+        count: number;
+        page: number;
+        limit: number;
+      };
+    }
     query.where('task.user.id = :user', { user: user.id });
 
     if (priority) {
@@ -56,12 +79,11 @@ export class TasksService {
 
     const [tasks, total] = await query.getManyAndCount();
 
-    return {
-      data: tasks,
-      count: total,
-      page,
-      limit,
-    };
+    const result = { data: tasks, count: total, page: page!, limit: limit! };
+
+    await this.redis.set(cacheKey, JSON.stringify(result), 'EX', 600);
+
+    return result;
   }
 
   async findOne(id: string, user: User): Promise<Task> {
@@ -97,7 +119,10 @@ export class TasksService {
     return updatedTask;
   }
 
-  async remove(id: string, user: User): Promise<void> {
+  async remove(
+    id: string,
+    user: User,
+  ): Promise<{ success: boolean; data: string }> {
     const task = await this.taskRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -115,10 +140,14 @@ export class TasksService {
       );
     }
 
-    const result = await this.taskRepository.delete(id);
+    const result = await this.taskRepository.update(id, { active: false });
     if (result.affected === 0) {
       throw new NotFoundException(`Task with ID "${id}" not found.`);
     }
+    return {
+      success: true,
+      data: 'Task removed successfully',
+    };
   }
 
   async populate(): Promise<{ count: number }> {

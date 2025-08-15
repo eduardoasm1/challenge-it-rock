@@ -37,6 +37,9 @@ export class Task {
   @JoinColumn({ name: 'user' })
   user: User;
 
+  @Column({ type: 'boolean', default: true })
+  active: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

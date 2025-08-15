@@ -19,7 +19,10 @@ import { User } from 'src/user/entity/user.entity';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { FastifyRequest } from 'fastify';
 import { ApiKeyGuard } from 'src/auth/guards/json-placeholder-api-key.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Auth')
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}

@@ -11,6 +11,7 @@ import { JsonPlaceholderModule } from './json-placeholder/json-placeholder.modul
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         },
       ],
     }),
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

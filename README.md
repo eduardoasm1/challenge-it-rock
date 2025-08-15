@@ -1,98 +1,316 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Challenge IT Rock - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Una aplicación backend desarrollada con NestJS que proporciona endpoints funcionales, eficientes y capaces de manejar grandes volúmenes de datos.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Tabla de Contenidos
 
-## Description
+- [Tecnologías](#-tecnologías)
+- [Instalación](#-instalación)
+- [Configuración](#-configuración)
+- [Ejecución](#-ejecución)
+- [Arquitectura](#-arquitectura)
+- [Módulos](#-módulos)
+- [API Endpoints](#-api-endpoints)
+- [Base de Datos](#-base-de-datos)
+- [Docker](#-docker)
+- [Scripts Disponibles](#-scripts-disponibles)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠 Tecnologías
 
-## Project setup
+- **Framework:** NestJS 11.x
+- **Base de Datos:** PostgreSQL con PostGIS (Neon)
+- **ORM:** TypeORM
+- **Cache:** Redis
+- **Autenticación:** JWT
+- **Validación:** class-validator, class-transformer
+- **Rate Limiting:** @nestjs/throttler
+- **Contenedores:** Docker & Docker Compose
 
-```bash
-$ npm install
+## 📦 Instalación
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone <repository-url>
+   cd challenge-it-rock
+   ```
+
+2. **Instalar dependencias**
+   ```bash
+   npm install
+   ```
+
+3. **Configurar variables de entorno** (ver sección [Configuración](#-configuración))
+
+## ⚙️ Configuración
+
+Crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+```env
+# Base de Datos PostgreSQL
+DB_HOST=ep-small-wind-ae4h6ft7.c-2.us-east-2.aws.neon.tech
+DB_PORT=5432
+DB_USER=neondb_owner
+DB_PASSWORD=npg_8yhekwNsO9GC
+DB_NAME=it-rock
+
+# JWT Configuration
+JWT_SECRET=it-rock-secret
+JWT_SECRET_EXPIRES_IN=15m
+JWT_REFRESH_SECRET=it-rock-refresh-secret
+JWT_REFRESH_SECRET_EXPIRES_IN=7d
+
+# APIs Externas
+JSON_PLACEHOLDER_API_KEY=miclavedeapijsonplaceholder
+JSON_PLACEHOLDER_BASE_API_URL=https://jsonplaceholder.typicode.com
+
+# Redis Cache
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
 
-## Compile and run the project
+### Usuario Administrador
 
-```bash
-# development
-$ npm run start
+Para acceder a endpoints protegidos, utilizar las siguientes credenciales:
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```json
+{
+  "userName": "admin",
+  "password": "password"
+}
 ```
 
-## Run tests
+## 🚀 Ejecución
+
+### Desarrollo Local
 
 ```bash
-# unit tests
-$ npm run test
+# Modo desarrollo con hot-reload
+npm run start:dev
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Modo debug
+npm run start:debug
 ```
 
-## Deployment
+La aplicación estará disponible en `http://localhost:3000`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Producción
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Construir la aplicación
+npm run build
+
+# Ejecutar en producción
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Con Docker
 
-## Resources
+```bash
+# Ejecutar con Docker Compose (incluye Redis)
+docker-compose up -d
 
-Check out a few resources that may come in handy when working with NestJS:
+# Solo construir la imagen
+docker build -t challenge-it-rock .
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 🏗 Arquitectura
 
-## Support
+### Arquitectura Modular
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+La aplicación implementa una **arquitectura modular** basada en NestJS donde cada funcionalidad tiene su propio módulo:
 
-## Stay in touch
+```
+src/
+├── auth/              # Autenticación y autorización
+├── user/              # Gestión de usuarios
+├── task/              # Gestión de tareas
+├── refresh-token/     # Tokens de actualización
+├── json-placeholder/  # Integración con API externa
+├── notifications/     # Sistema de notificaciones
+├── redis/             # Configuración de Redis
+├── common/            # Utilidades compartidas
+└── types/             # Definiciones de tipos
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Características Principales
 
-## License
+- **Inyección de Dependencias** nativa de NestJS
+- **Decoradores** para validación y transformación
+- **Guards** para protección de rutas
+- **Interceptores** para cache y logging
+- **Pipes** para validación de datos
+- **Filters** para manejo de excepciones
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📚 Módulos
+
+### **AuthModule**
+- Autenticación JWT
+- Login/Register endpoints
+- Password hashing con bcrypt
+
+### **UserModule**
+- CRUD de usuarios
+- Perfiles de usuario
+- Relaciones con tareas
+
+### **TaskModule**
+- Gestión completa de tareas
+- Prioridades (LOW, MEDIUM, HIGH)
+- Propiedad para Soft delete con campo `active`
+- Relación con usuarios
+
+### **JsonPlaceholderModule**
+- Integración con JSONPlaceholder API
+- Cache de respuestas
+- Manejo de errores
+
+### **NotificationsModule**
+- Sistema de eventos
+- Listeners para acciones
+- Notificaciones en tiempo real
+
+### **RedisModule**
+- Configuración de cache
+- Gestión de sesiones
+- Rate limiting
+
+## 🔌 API Endpoints
+
+### Autenticación
+```
+POST /auth/login       # Iniciar sesión
+POST /auth/register    # Registrar usuario
+POST /auth/refresh     # Renovar token
+```
+
+### Tareas
+```
+GET    /tasks          # Listar tareas
+POST   /tasks          # Crear tarea
+GET    /tasks/:id      # Obtener tarea
+PUT    /tasks/:id      # Actualizar tarea
+DELETE /tasks/:id      # Eliminar tarea (soft delete)
+```
+## 🗄️ Base de Datos
+
+### Entidades Principales
+
+**User Entity:**
+- id (UUID)
+- email (unique)
+- password (hashed)
+- name
+- active (soft delete)
+- timestamps
+
+**Task Entity:**
+- id (UUID)
+- title
+- description
+- completed (boolean)
+- priority (enum: LOW, MEDIUM, HIGH)
+- user (relation)
+- active (soft delete)
+- timestamps
+
+**RefreshToken Entity:**
+- id (UUID)
+- token
+- user (relation)
+- expiresAt
+- timestamps
+
+### Características de BD
+
+- **PostgreSQL** con SSL habilitado
+- **Soft Delete** en todas las entidades principales
+- **Índices optimizados** para consultas frecuentes
+- **Relaciones** bien definidas con TypeORM
+- **Timestamps** automáticos (createdAt, updatedAt)
+
+## 🐳 Docker
+
+### Docker Compose
+
+El proyecto incluye configuración completa con:
+
+- **App Container:** Aplicación NestJS
+- **Redis Container:** Cache y sesiones
+- **Health Checks:** Para todos los servicios
+- **Volumes:** Persistencia de datos Redis
+
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - redis
+  
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+```
+
+## 📝 Scripts Disponibles
+
+```bash
+# Desarrollo
+npm run start:dev      # Modo desarrollo con hot-reload
+npm run start:debug    # Modo debug con inspector
+
+# Producción
+npm run build          # Construir aplicación
+npm run start:prod     # Ejecutar en producción
+
+# Testing
+npm run test           # Tests unitarios
+npm run test:e2e       # Tests end-to-end
+npm run test:cov       # Coverage de tests
+npm run test:watch     # Tests en modo watch
+
+# Calidad de Código
+npm run lint           # ESLint
+npm run format         # Prettier
+```
+
+## 🔧 Decisiones Técnicas
+
+### **Performance**
+- **Rate Limiting:** 10 requests por minuto por IP
+- **Cache Redis:** Para consultas frecuentes
+- **Consultas optimizadas:** TypeORM con lazy loading
+- **Paginación:** En endpoints que retornan listas
+
+### **Seguridad**
+- **JWT Tokens:** Con refresh token rotation
+- **Password Hashing:** bcrypt con salt rounds
+- **CORS:** Configurado para producción
+- **Validation Pipes:** En todos los endpoints
+
+### **Escalabilidad**
+- **Arquitectura modular:** Fácil mantenimiento
+- **Event-driven:** Sistema de notificaciones
+- **Docker ready:** Para deployment
+- **Environment configs:** Separación de entornos
+
+## 🚀 Despliegue
+
+La aplicación está desplegada en **Render** usando Docker:
+
+1. **Build automático** desde repositorio
+2. **Variables de entorno** configuradas
+3. **Base de datos externa** (Neon PostgreSQL)
+4. **Redis externo** para cache
+5. **SSL/HTTPS** habilitado
+
+---
+
+**Desarrollado por:** Eduardo Sequeira  
+**Versión:** 0.0.1  
+**Licencia:** UNLICENSED

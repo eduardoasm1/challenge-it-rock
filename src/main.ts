@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -14,6 +15,8 @@ async function bootstrap() {
     new FastifyAdapter({ logger: true }),
   );
   const configService = app.get(ConfigService);
+
+  app.setGlobalPrefix('api/v1');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -24,6 +27,15 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  const config = new DocumentBuilder()
+    .setTitle('Task example')
+    .setDescription('The tasks API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
 
   const port = configService.get<number>('PORT') || 3000;
   console.log(

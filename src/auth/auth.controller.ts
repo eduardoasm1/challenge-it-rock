@@ -5,7 +5,9 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import { IRefreshTokenDto } from './dto/refresh-token.dto';
 import { FastifyRequest } from 'fastify';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 @UseGuards(ThrottlerGuard)
 export class AuthController {
