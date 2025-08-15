@@ -15,6 +15,14 @@ Una aplicación backend desarrollada con NestJS que proporciona endpoints funcio
 - [Docker](#-docker)
 - [Scripts Disponibles](#-scripts-disponibles)
 
+## 🛠 Documentación
+
+La documentación completa de la API está disponible a través de Swagger UI una vez que la aplicación esté ejecutándose:
+
+**URL de Documentación:** `http://localhost:3000/docs`
+
+> 📝 **Nota:** La documentación incluye todos los endpoints disponibles, esquemas de datos, ejemplos de requests/responses y permite probar la API directamente desde el navegador.
+
 ## 🛠 Tecnologías
 
 - **Framework:** NestJS 11.x
@@ -46,6 +54,8 @@ Una aplicación backend desarrollada con NestJS que proporciona endpoints funcio
 Crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
 
 ```env
+PORT=3000
+
 # Base de Datos PostgreSQL
 DB_HOST=ep-small-wind-ae4h6ft7.c-2.us-east-2.aws.neon.tech
 DB_PORT=5432
