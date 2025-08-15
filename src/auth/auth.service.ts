@@ -21,9 +21,9 @@ export class AuthService {
     private readonly rtRepo: Repository<RefreshToken>,
   ) {}
 
-  private signAccessToken(userId: string, userName: string, roles: string[]) {
+  private signAccessToken(userId: string, username: string, roles: string[]) {
     return this.jwtService.sign(
-      { id: userId, userName, roles },
+      { id: userId, username, roles },
       {
         secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: this.configService.get<string>('JWT_SECRET_EXPIRES_IN'),
@@ -66,8 +66,8 @@ export class AuthService {
   }
 
   async register(registerUser: RegisterAuthDto): Promise<User> {
-    const { userName, password } = registerUser;
-    const userExists = await this.userService.findOne({ userName });
+    const { username, password } = registerUser;
+    const userExists = await this.userService.findOne({ username });
 
     if (userExists) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
@@ -85,8 +85,8 @@ export class AuthService {
     ip: string,
     userAgent: string,
   ): Promise<ILoginResponseDto> {
-    const { userName, password } = loginUser;
-    const user = await this.userService.findOne({ userName });
+    const { username, password } = loginUser;
+    const user = await this.userService.findOne({ username });
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -102,7 +102,7 @@ export class AuthService {
 
     const accessToken = this.signAccessToken(
       user.id,
-      user.userName,
+      user.username,
       user.roles,
     );
 
@@ -156,7 +156,7 @@ export class AuthService {
 
       const newAccessToken = this.signAccessToken(
         user.id,
-        user.userName,
+        user.username,
         user.roles,
       );
 

@@ -50,7 +50,7 @@ export class TasksService {
     const { priority, completed, page, limit } = filterDto;
     const query = this.taskRepository.createQueryBuilder('task');
 
-    const cacheKey = `tasks:${user.id}:${priority ?? 'all'}:${completed ?? 'all'}:${page ?? 1}:${limit ?? 10}`;
+    const cacheKey = `tasks:${user.id}:${priority ?? 'all'}:${completed ?? 'all'}:active:true:${page ?? 1}:${limit ?? 10}`;
 
     const cached = await this.redis.get(cacheKey);
 
@@ -63,6 +63,8 @@ export class TasksService {
       };
     }
     query.where('task.user.id = :user', { user: user.id });
+
+    query.andWhere('task.active = :active', { active: true });
 
     if (priority) {
       query.andWhere('task.priority = :priority', { priority });
@@ -88,7 +90,7 @@ export class TasksService {
 
   async findOne(id: string, user: User): Promise<Task> {
     const task = await this.taskRepository.findOne({
-      where: { id, user: { id: user.id } },
+      where: { id, user: { id: user.id }, active: true },
       relations: ['user'],
     });
     if (!task) {
@@ -130,7 +132,6 @@ export class TasksService {
     if (!task) {
       throw new NotFoundException(`Task with ID "${id}" not found.`);
     }
-
     const isOwner = task.user.id === user.id;
     const isAdmin = user.roles.includes(Role.ADMIN);
 

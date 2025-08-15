@@ -15,8 +15,6 @@ export class TaskListener {
 
   @OnEvent(TASK_EVENTS.COMPLETED, { async: true })
   handleTaskCompletedEvent(payload: TaskEventPayload) {
-    this.logger.log(
-      `Tarea completada Título: "${payload.task.title}", ID: ${payload.task.id}`,
-    );
+    this.logger.log(`Tarea completada ID: ${payload.task.id}`);
   }
 }

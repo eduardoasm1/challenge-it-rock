@@ -74,7 +74,7 @@ Para acceder a endpoints protegidos, utilizar las siguientes credenciales:
 
 ```json
 {
-  "userName": "admin",
+  "username": "admin",
   "password": "password"
 }
 ```
@@ -190,6 +190,7 @@ POST   /tasks          # Crear tarea
 GET    /tasks/:id      # Obtener tarea
 PUT    /tasks/:id      # Actualizar tarea
 DELETE /tasks/:id      # Eliminar tarea (soft delete)
+GET    /tasks/populate # Popular tareas (aqui es necesario guardar el header "x-api-key" para autenticacion del servicio de tercero, value = miclavedeapijsonplaceholder)
 ```
 ## 🗄️ Base de Datos
 
@@ -267,12 +268,6 @@ npm run start:debug    # Modo debug con inspector
 # Producción
 npm run build          # Construir aplicación
 npm run start:prod     # Ejecutar en producción
-
-# Testing
-npm run test           # Tests unitarios
-npm run test:e2e       # Tests end-to-end
-npm run test:cov       # Coverage de tests
-npm run test:watch     # Tests en modo watch
 
 # Calidad de Código
 npm run lint           # ESLint
