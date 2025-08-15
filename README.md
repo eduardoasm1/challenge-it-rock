@@ -1,6 +1,6 @@
 # Challenge IT Rock - Backend API
 
-Una aplicación backend desarrollada con NestJS que proporciona endpoints funcionales, eficientes y capaces de manejar grandes volúmenes de datos.
+Una aplicación backend desarrollada con NestJS que proporciona endpoints funcionales, eficientes.
 
 ## 📋 Tabla de Contenidos
 
@@ -303,10 +303,6 @@ npm run format         # Prettier
 - **Event-driven:** Sistema de notificaciones
 - **Docker ready:** Para deployment
 - **Environment configs:** Separación de entornos
-
-## 🚀 Despliegue
-
-La aplicación está desplegada en **Render** usando Docker:
 
 1. **Build automático** desde repositorio
 2. **Variables de entorno** configuradas
